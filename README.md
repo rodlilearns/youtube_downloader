@@ -5,7 +5,9 @@ Download mp3 and mp4 from Youtube.
 Need the pytubefix module in the working environment.
 `pip3 install pytubefix`
 
-Download mp3:
+## User Guide
+
+Download mp3: 
 `python3 download_music.py`
 
 ## References:
