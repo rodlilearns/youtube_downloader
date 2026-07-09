@@ -2,7 +2,7 @@
 Download mp3 and mp4 from Youtube.
 
 ## Pre-requisites
-Need the pytubefix module in the working environment.  
+1. Need the pytubefix module in the working environment.  
 `pip3 install pytubefix`
 
 ## User Guide
@@ -11,9 +11,11 @@ Download music single:
 `python3 download_music.py`  
 
 Download music playlists:  
-1. Create artists.txt in root working directory.  
-2. Append playlist URLs to artists.txt.  
-Example artists.txt file:  
+1. Create playlists.txt in root working directory.  
+2. Append playlist URLs to playlists.txt.  
+  
+Example playlists.txt file:  
+
 ```plaintext
 # Eurovision
 # 2026

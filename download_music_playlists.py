@@ -1,7 +1,7 @@
 import os
 from pytubefix import Playlist
 
-ARTISTS_FILE = "artists.txt"
+PLAYLISTS_FILE = "playlists.txt"
 HISTORY_FILE = "history.txt"
 OUTPUT_FOLDER = "Downloads"
 
@@ -18,16 +18,16 @@ def save_to_history(video_id):
         f.write(f"{video_id}\n")
 
 def check_and_download_music(base_output_path="Downloads/Music"):
-    playlist_urls = load_list(ARTISTS_FILE)
+    playlist_urls = load_list(PLAYLISTS_FILE)
     history = set(load_list(HISTORY_FILE)) 
     
     if not playlist_urls:
-        print(f"Please add some album/playlist URLs to your '{ARTISTS_FILE}' first.")
+        print(f"Please add some album/playlist URLs to your '{PLAYLISTS_FILE}' first.")
         return
 
     print(f"Scanning {len(playlist_urls)} playlist sources for new tracks...")
 
-    # Loop through ARTISTS_FILE and grab playlists
+    # Loop through PLAYLISTS_FILE and grab playlists
     for url in playlist_urls:
         try:
             pl = Playlist(url)
