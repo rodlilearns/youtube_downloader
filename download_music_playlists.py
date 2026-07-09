@@ -1,0 +1,159 @@
+import os
+from pytubefix import Playlist
+
+ARTISTS_FILE = "artists.txt"
+HISTORY_FILE = "history.txt"
+OUTPUT_FOLDER = "Downloads"
+
+def load_list(filename):
+    """Loads lines from text file cleanly, ignoring comments"""
+    if not os.path.exists(filename):
+        return []
+    with open(filename, "r", encoding="utf-8") as f:
+        return [line.strip() for line in f if line.strip() and not line.startswith("#")]
+    
+def save_to_history(video_id):
+    """Appends a newly downloaded video ID to the history database file."""
+    with open(HISTORY_FILE, "a", encoding="utf-8") as f:
+        f.write(f"{video_id}\n")
+
+def check_and_download_music(base_output_path="Downloads/Music"):
+    playlist_urls = load_list(ARTISTS_FILE)
+    history = set(load_list(HISTORY_FILE)) 
+    
+    if not playlist_urls:
+        print(f"Please add some album/playlist URLs to your '{ARTISTS_FILE}' first.")
+        return
+
+    print(f"Scanning {len(playlist_urls)} playlist sources for new tracks...")
+
+    # Loop through ARTISTS_FILE and grab playlists
+    for url in playlist_urls:
+        try:
+            pl = Playlist(url)
+            print(f"\nChecking Playlist Album: {pl.title}")
+            all_attributes = dir(pl)
+
+            # To see what attributes are available for pl, uncomment the following stanza
+            # for attribute in all_attributes:
+            #     if not attribute.startswith("_"):
+            #         print(attribute)
+
+            for video in pl.videos:
+                if video.video_id not in history:
+                    print(f"\n🎵 New track discovered! -> '{video.title}'")
+                    print("Starting download...")
+
+                    audio_stream = video.streams.get_audio_only()
+                    video_title = video.title
+                    artist_name = video.author if video.author else pl.title
+                    dividers = [" - ", " | ", " • "]
+                    has_divider = any(d in video_title for d in dividers)
+                    # Scrubbing
+                    if has_divider:
+                        used_divider = next(d for d in dividers if d in video_title)
+                        parts = video_title.split(used_divider)
+                        
+                        # Clean up each piece
+                        cleaned_parts = [p.replace("@", "").strip() for p in parts if p.lower().strip() != "topic"]
+                        
+                        # Universally assume: Left side is Artist, Right side is Song
+                        artist_name = cleaned_parts[0]
+                        song_title = cleaned_parts[-1]
+                    else:
+                        # 2. Fallback if there is no divider
+                        song_title = video_title.replace("@", "").strip()
+                        
+                        # Use video author, cleaning up "- Topic" if present
+                        raw_author = video.author if video.author else pl.title
+                        if " - topic" in raw_author.lower():
+                            artist_name = raw_author.split(" - ")[0]
+                        else:
+                            artist_name = raw_author
+                            
+                        artist_name = artist_name.replace("@", "").strip()
+
+                    # Final failsafe: If the artist name accidentally got resolved to the record label,
+                    # but the parent playlist title looks cleaner, we can manually check for it.
+                    if "music" in artist_name.lower() or "records" in artist_name.lower():
+                        # If the playlist is named "Music videos", don't use it. Else, use it!
+                        if "music videos" not in pl.title.lower():
+                            artist_name = pl.title
+
+                    custom_filename = f"{artist_name} - {song_title}"
+                    artist_folder = os.path.join(base_output_path, artist_name)
+                    os.makedirs(artist_folder, exist_ok=True)
+
+                    downloaded_file = audio_stream.download(
+                        output_path=artist_folder,
+                        filename=custom_filename
+                    )
+                    base, ext = os.path.splitext(downloaded_file)
+                    new_file = base + '.mp3'
+
+                    if os.path.exists(new_file):
+                        os.remove(new_file)
+                    os.rename(downloaded_file, new_file)
+
+                    save_to_history(video.video_id)
+                    history.add(video.video_id)
+                    print(f"✓ Saved and added to history.")
+                else:
+                    print(f"Already downloaded: {video.title} (Skipping)")
+        
+        except Exception as e:
+            print(f"❌ Error scanning playlist {url}: {e}")
+        
+        # visual divider between playlists
+        print("-" * 30)
+
+if __name__ == "__main__":
+    check_and_download_music()
+
+
+
+
+
+
+
+
+
+
+
+
+# import yt_dlp
+
+# # Let's test with a channel URL, specifically targeting the playlists tab
+# channel_url = "https://www.youtube.com/playlist?list=OLAK5uy_l-swrKG1qzFvWL5wSZG4Y7uID5oTNi89g"
+
+# # We use 'extract_flat': True because we just want to look at the list of playlists, 
+# # not download all the actual video files inside them!
+# ydl_opts = {
+#     'extract_flat': True,  
+#     'quiet': True,         # Suppresses the massive wall of internal terminal text
+# }
+
+# print(f"Scanning playlists for: {channel_url}\n")
+
+# with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+#     try:
+#         # Extract the channel data dictionary
+#         channel_info = ydl.extract_info(channel_url, download=False)
+        
+#         # In yt-dlp, the items found inside a page are stored in a list called 'entries'
+#         playlists = channel_info.get('entries', [])
+        
+#         print(f"Found {len(playlists)} items on the playlists page:\n")
+        
+#         for index, playlist in enumerate(playlists, 1):
+#             title = playlist.get('title')
+#             playlist_id = playlist.get('id')
+#             playlist_url = playlist.get('url')
+            
+#             print(f"{index}. Title: {title}")
+#             print(f"   ID: {playlist_id}")
+#             print(f"   URL: {playlist_url}")
+#             print("-" * 20)
+            
+#     except Exception as e:
+#         print(f"An error occurred: {e}")
