@@ -3,20 +3,20 @@ from pytubefix import YouTube
 from pytubefix.cli import on_progress
 from pytubefix.exceptions import VideoUnavailable
 
-def download_youtube_audio(url, output_path="Downloads"):
+def download_youtube_audio(url, output_path="Downloads/Music"):
     """
     Downloads the highest quality audio from a YouTube video and saves it as an MP3.
     """
     try:
         print("\nFetching video details...")
-        yt = YouTube(url, on_progress_callback=on_progress)
+        video = YouTube(url, on_progress_callback=on_progress)
         
-        print(f"Title: {yt.title}")
-        print(f"Author: {yt.author}")
+        print(f"Title: {video.title}")
+        print(f"Author: {video.author}")
         
         # Get the highest quality audio stream available
         print("Downloading audio stream...")
-        audio_stream = yt.streams.get_audio_only()
+        audio_stream = video.streams.get_audio_only()
         
         # Download the file (it defaults to .mp4/.webm format)
         downloaded_file = audio_stream.download(output_path=output_path)
@@ -49,5 +49,5 @@ if __name__ == "__main__":
             print("Please enter a valid URL.")
             continue
             
-        # Downloads to a local 'Downloads' folder by default
-        download_youtube_audio(user_url, output_path="Downloads")
+        # Downloads to a local 'Downloads/Music' folder by default
+        download_youtube_audio(user_url, output_path="Downloads/Music")
