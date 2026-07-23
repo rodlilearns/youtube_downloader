@@ -1,9 +1,12 @@
 import os
 from pytubefix import Playlist
+from pytubefix.helpers import reset_cache
+
+reset_cache()
 
 PLAYLISTS_FILE = "playlists.txt"
 HISTORY_FILE = "history.txt"
-OUTPUT_FOLDER = "Downloads"
+OUTPUT_FOLDER = "Downloads/Music"
 
 def load_list(filename):
     """Loads lines from text file cleanly, ignoring comments"""
@@ -17,7 +20,7 @@ def save_to_history(video_id):
     with open(HISTORY_FILE, "a", encoding="utf-8") as f:
         f.write(f"{video_id}\n")
 
-def check_and_download_music(base_output_path="Downloads/Music"):
+def check_and_download_music(base_output_path=OUTPUT_FOLDER):
     playlist_urls = load_list(PLAYLISTS_FILE)
     history = set(load_list(HISTORY_FILE)) 
     
