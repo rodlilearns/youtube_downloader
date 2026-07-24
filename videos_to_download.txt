@@ -1,0 +1,5 @@
+# Example `videos_to_download.txt` file
+# ABC News Loop
+https://youtube.com/playlist?list=PLDTPrMoGHssD6wII6GfDuHq9XEAbMtItf&si=GDISFMDrgR5ziNd7
+# ABC If You're Listening
+https://youtube.com/playlist?list=PLDTPrMoGHssAfgMMS3L5LpLNFMNp1U_Nq&si=TJ04Ru9k5AAmRHcd
