@@ -1,0 +1,8 @@
+# Example `playlists.txt` file
+# Eurovision
+# 2026
+https://www.youtube.com/watch?v=J3oGYo_mekw&list=PLmWYEDTNOGUJVnzG0gqW4x1-9p7ejEy67
+# 2025
+https://www.youtube.com/watch?v=gQOGxx6Fk9k&list=PLRIS7dI_vQcj_e31qUtuW18P8rpIYP0f7
+# 2024
+https://www.youtube.com/watch?v=IiHFnmI8pxg&list=PL7qAso9Bl0b_MDhKIpPJUOrdV6z1H3hv
